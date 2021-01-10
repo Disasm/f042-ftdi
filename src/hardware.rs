@@ -5,7 +5,7 @@ impl Hardware {
         // TODO
     }
 
-    // Set `divisor` for 12MHz clock
+    // Set `divisor` for 6MHz clock
     pub fn mpsse_set_tck_divisor(&self, divisor: u32) {
         // TODO
     }

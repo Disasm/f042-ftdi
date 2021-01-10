@@ -241,7 +241,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 }
 
                 let div = (data[1] as u16) | ((data[2] as u16) << 8);
-                let div = (div as u32 + 1) * 2;
+                let div = div as u32 + 1;
                 hardware.mpsse_set_tck_divisor(div);
                 3
             }
