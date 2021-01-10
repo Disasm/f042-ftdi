@@ -1,0 +1,23 @@
+[package]
+name = "f042-ftdi"
+version = "0.1.0"
+authors = ["disasm"]
+edition = "2018"
+
+[dependencies]
+panic-halt = "0.2.0"
+cortex-m = "0.6.4"
+cortex-m-rt = "0.6.13"
+stm32f0xx-hal = { version = "0.17.1", features = ["stm32f042", "stm32-usbd"] }
+usb-device = "0.2.7"
+rtt-target = { version = "0.2.0", features = ["cortex-m"] }
+panic-rtt-target = { version = "0.1.0", features = ["cortex-m"] }
+
+[profile.dev]
+debug = true
+lto = true
+
+[profile.release]
+lto = true
+debug = true
+opt-level = "s"

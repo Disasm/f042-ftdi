@@ -1,0 +1,13 @@
+[default.probe]
+usb_vid = "0483"
+usb_pid = "374b"
+protocol = "Swd"
+
+[default.flashing]
+enabled = true
+
+[default.rtt]
+enabled = true
+
+[default.general]
+chip = "STM32F042"
