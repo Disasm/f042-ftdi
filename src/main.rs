@@ -104,21 +104,19 @@ fn test() {
         cortex_m::asm::delay(20);
 
         extern "C" {
-            fn _write_tdi_bytes_mode0_lsb_12mhz(data_ptr: *const u8, data_size: usize, bsrr: *mut u32);
-            fn _write_tdi_bytes_mode0_lsb_6mhz(data_ptr: *const u8, data_size: usize, bsrr: *mut u32);
-            fn _write_tdi_bytes_mode0_lsb_delay(data_ptr: *const u8, data_size: usize, bsrr: *mut u32, delay: u32);
+            fn _write_tdi_bytes_lsb_mode0_12mhz(data_ptr: *const u8, data_size: usize, bsrr: *mut u32);
+            fn _write_tdi_bytes_lsb_mode0_6mhz(data_ptr: *const u8, data_size: usize, bsrr: *mut u32);
+            fn _write_tdi_bytes_lsb_mode0_delay(data_ptr: *const u8, data_size: usize, bsrr: *mut u32, delay: u32);
         }
         bsrr.write_volatile(SS0);
 
-        //_write_tdi_bytes_mode0_lsb_12mhz(buf.as_ptr(), buf.len(), bsrr);
-        //cortex_m::asm::delay(20);
-
-        _write_tdi_bytes_mode0_lsb_6mhz(buf.as_ptr(), buf.len(), bsrr);
+        _write_tdi_bytes_lsb_mode0_12mhz(buf.as_ptr(), buf.len(), bsrr);
         cortex_m::asm::delay(20);
-        for div in 4..10 {
-            cortex_m::asm::delay(20);
-            _write_tdi_bytes_mode0_lsb_delay(buf.as_ptr(), buf.len(), bsrr, div);
-        }
+
+        _write_tdi_bytes_lsb_mode0_6mhz(buf.as_ptr(), buf.len(), bsrr);
+        cortex_m::asm::delay(20);
+
+        _write_tdi_bytes_lsb_mode0_delay(buf.as_ptr(), buf.len(), bsrr, 0);
 
         bsrr.write_volatile(SS1);
     }

@@ -5,12 +5,12 @@
 // TDO: 6
 // TMS: 4
 
-.section .text._write_tdi_bytes_mode0_lsb_12mhz
-.global _write_tdi_bytes_mode0_lsb_12mhz
+.section .text._write_tdi_bytes_lsb_mode0_12mhz
+.global _write_tdi_bytes_lsb_mode0_12mhz
 .syntax unified
 .thumb_func
 .cfi_startproc
-_write_tdi_bytes_mode0_lsb_12mhz:
+_write_tdi_bytes_lsb_mode0_12mhz:
     PUSH    {R4-R6,LR}
     CMP     R1, #0
     BEQ     2f
@@ -91,17 +91,17 @@ _write_tdi_bytes_mode0_lsb_12mhz:
 2:
     POP     {R4-R6,PC}
     .cfi_endproc
-    .size _write_tdi_bytes_mode0_lsb_12mhz, . - _write_tdi_bytes_mode0_lsb_12mhz
+    .size _write_tdi_bytes_lsb_mode0_12mhz, . - _write_tdi_bytes_lsb_mode0_12mhz
 
 
 
-.section .text._write_tdi_bytes_mode0_lsb_6mhz
-.global _write_tdi_bytes_mode0_lsb_6mhz
+.section .text._write_tdi_bytes_lsb_mode0_6mhz
+.global _write_tdi_bytes_lsb_mode0_6mhz
 .syntax unified
 .thumb_func
 .cfi_startproc
 .align 2
-_write_tdi_bytes_mode0_lsb_6mhz:
+_write_tdi_bytes_lsb_mode0_6mhz:
     PUSH    {R4-R7,LR}
     CMP     R1, #0
     BEQ     3f
@@ -143,17 +143,17 @@ _write_tdi_bytes_mode0_lsb_6mhz:
 3:
     POP     {R4-R7,PC}
     .cfi_endproc
-    .size _write_tdi_bytes_mode0_lsb_6mhz, . - _write_tdi_bytes_mode0_lsb_6mhz
+    .size _write_tdi_bytes_lsb_mode0_6mhz, . - _write_tdi_bytes_lsb_mode0_6mhz
 
 
 
-.section .text._write_tdi_bytes_mode0_lsb_delay
-.global _write_tdi_bytes_mode0_lsb_delay
+.section .text._write_tdi_bytes_lsb_mode0_delay
+.global _write_tdi_bytes_lsb_mode0_delay
 .syntax unified
 .thumb_func
 .cfi_startproc
 .align 2
-_write_tdi_bytes_mode0_lsb_delay:
+_write_tdi_bytes_lsb_mode0_delay:
     PUSH    {R4-R7,LR}
     CMP     R1, #0
     BEQ     3f
@@ -206,4 +206,4 @@ _write_tdi_bytes_mode0_lsb_delay:
 3:
     POP     {R4-R7,PC}
     .cfi_endproc
-    .size _write_tdi_bytes_mode0_lsb_delay, . - _write_tdi_bytes_mode0_lsb_delay
+    .size _write_tdi_bytes_lsb_mode0_delay, . - _write_tdi_bytes_lsb_mode0_delay

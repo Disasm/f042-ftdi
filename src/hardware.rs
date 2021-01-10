@@ -12,17 +12,17 @@ impl Hardware {
 
     // [0x1B] Clock Data Bits Out on -ve clock edge LSB first (no read)
     // CLK starts at 0
-    pub fn mpsse_write_tdi_bits_mode0(&self, byte: u8, nbits: u8) {
+    pub fn mpsse_write_tdi_bits_lsb_mode0(&self, byte: u8, nbits: u8) {
     }
 
     // [0x39] Clock Data Bytes In and Out LSB first
     // Out on -ve edge, in on +ve edge
-    pub fn mpsse_transfer_tdi_bytes_mode0(&self, rx_bytes: &[u8], tx_bytes: &mut [u8]) {
+    pub fn mpsse_transfer_tdi_bytes_lsb_mode0(&self, rx_bytes: &[u8], tx_bytes: &mut [u8]) {
     }
 
     // [0x3B] Clock Data Bits In and Out LSB first
     // Out on -ve edge, in on +ve edge
-    pub fn mpsse_transfer_tdi_bits_mode0(&self, byte: u8, nbits: u8) -> u8 {
+    pub fn mpsse_transfer_tdi_bits_lsb_mode0(&self, byte: u8, nbits: u8) -> u8 {
         // TODO
         0x00
     }
@@ -31,7 +31,7 @@ impl Hardware {
     // TMS with LSB first on -ve clk edge - use if clk is set to '0'
     // Bit 7 of the Byte1 is passed on to TDI/DO before the first clk of TMS
     // and is held static for the duration of TMS clocking.
-    pub fn mpsse_write_tms_bits_mode0(&self, byte: u8, nbits: u8) {
+    pub fn mpsse_write_tms_bits_lsb_mode0(&self, byte: u8, nbits: u8) {
         // TODO
     }
 
@@ -41,7 +41,7 @@ impl Hardware {
     // and is held static for the duration of TMS clocking. The TDO/DI pin is
     // sampled for the duration of TMS and a byte containing the data is passed
     // back at the end of TMS clocking.
-    pub fn mpsse_transfer_tms_bits_mode0(&self, byte: u8, nbits: u8) -> u8 {
+    pub fn mpsse_transfer_tms_bits_lsb_mode0(&self, byte: u8, nbits: u8) -> u8 {
         // TODO
         0x00
     }

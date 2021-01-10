@@ -109,7 +109,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 }
                 let nbits = (data[1] & 7) + 1;
                 let byte = data[2];
-                hardware.mpsse_write_tdi_bits_mode0(byte, nbits);
+                hardware.mpsse_write_tdi_bits_lsb_mode0(byte, nbits);
                 3
             }
             0x39 | 0x3c => {
@@ -129,7 +129,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
 
                 if command == 0x39 {
                     tx_buffer.write_all(nbytes, |buffer| {
-                        hardware.mpsse_transfer_tdi_bytes_mode0(&data[2..2+nbytes], buffer);
+                        hardware.mpsse_transfer_tdi_bytes_lsb_mode0(&data[2..2+nbytes], buffer);
                         Result::Ok(nbytes)
                     }).ok();
                 } else {
@@ -155,7 +155,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 if command == 0x3B {
                     let nbits = (data[1] & 7) + 1;
                     let byte = data[2];
-                    response = hardware.mpsse_transfer_tdi_bits_mode0(byte, nbits);
+                    response = hardware.mpsse_transfer_tdi_bits_lsb_mode0(byte, nbits);
                 } else {
                     response = 0; // Not supported
                 }
@@ -175,7 +175,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 if command == 0x4b {
                     let nbits = (data[1] & 7) + 1;
                     let byte = data[2];
-                    hardware.mpsse_write_tms_bits_mode0(byte, nbits);
+                    hardware.mpsse_write_tms_bits_lsb_mode0(byte, nbits);
                 }
                 3
             }
@@ -192,7 +192,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 if command == 0x6b {
                     let nbits = (data[1] & 7) + 1;
                     let byte = data[2];
-                    response = hardware.mpsse_transfer_tms_bits_mode0(byte, nbits);
+                    response = hardware.mpsse_transfer_tms_bits_lsb_mode0(byte, nbits);
                 } else {
                     response = 0; // Not supported
                 }
