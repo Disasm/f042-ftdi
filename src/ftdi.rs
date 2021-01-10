@@ -26,6 +26,9 @@ const SIO_RESET_SIO: u8 = 0;
 const SIO_RESET_PURGE_RX: u8 = 1;
 const SIO_RESET_PURGE_TX: u8 = 2;
 
+const BITMODE_RESET: u8 = 0;
+const BITMODE_MPSSE: u8 = 2;
+
 #[derive(PartialOrd, PartialEq, Copy, Clone)]
 pub enum FtdiMode {
     Serial,
@@ -435,8 +438,16 @@ impl<B: UsbBus> UsbClass<B> for FtdiPort<'_, B> {
             }
             SIO_SET_BITMODE_REQUEST => {
                 let _bit_mask = req.value as u8;
-                let _bit_mode = (req.value >> 8) as u8;
-                // TODO: process command
+                let bit_mode = (req.value >> 8) as u8;
+
+                let new_mode = match bit_mode {
+                    BITMODE_RESET => FtdiMode::Serial,
+                    BITMODE_MPSSE => FtdiMode::MPSSE,
+                    _ => FtdiMode::Serial,
+                };
+                self.current_mode = new_mode;
+
+                // TODO: process bitmask
 
                 xfer.accept().ok();
             }
