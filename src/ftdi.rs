@@ -376,9 +376,10 @@ impl<B: UsbBus> UsbClass<B> for FtdiPort<'_, B> {
     fn control_out(&mut self, xfer: ControlOut<B>) {
         let req = xfer.request();
 
+        let port_index = req.index as u8;
         if !(req.request_type == control::RequestType::Vendor
             && req.recipient == control::Recipient::Device
-            && req.index == (u8::from(self.interface) + 1) as u16)
+            && port_index == (u8::from(self.interface) + 1))
         {
             return;
         }
@@ -448,9 +449,10 @@ impl<B: UsbBus> UsbClass<B> for FtdiPort<'_, B> {
     fn control_in(&mut self, xfer: ControlIn<B>) {
         let req = xfer.request();
 
+        let port_index = req.index as u8;
         if !(req.request_type == control::RequestType::Vendor
             && req.recipient == control::Recipient::Device
-            && req.index == (u8::from(self.interface) + 1) as u16)
+            && port_index == (u8::from(self.interface) + 1))
         {
             return;
         }
