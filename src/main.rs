@@ -163,9 +163,11 @@ fn main() -> ! {
 
     // Construct fake critical section
     let cs = unsafe { core::mem::zeroed() };
-    let ss = gpioa.pa4.into_push_pull_output_hs(&cs);
-    let sck = gpioa.pa5.into_push_pull_output_hs(&cs);
-    let mosi = gpioa.pa7.into_push_pull_output_hs(&cs);
+    let tms = gpioa.pa4.into_push_pull_output_hs(&cs);
+    let tck = gpioa.pa5.into_push_pull_output_hs(&cs);
+    let tdo = gpioa.pa6.into_floating_input(&cs);
+    let tdi = gpioa.pa7.into_push_pull_output_hs(&cs);
+    drop(cs);
 
     test();
 
