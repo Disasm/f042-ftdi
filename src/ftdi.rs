@@ -83,6 +83,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
             .manufacturer("FTDI")
             .product("Dual RS232")
             .serial_number("Nope, it's STM32F042")
+            .device_release(0x0500)
             .build()
     }
 
