@@ -187,7 +187,7 @@ fn main() -> ! {
 
     test();
 
-    let hw = Hardware;
+    let hw = Hardware::new();
 
     let usb = Peripheral {
         usb: dp.USB,

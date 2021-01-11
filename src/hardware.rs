@@ -1,18 +1,48 @@
-pub struct Hardware;
+use core::sync::atomic::{AtomicU32, Ordering};
+use stm32f0xx_hal::pac;
+
+pub struct Hardware {
+    mpsse_divisor: AtomicU32,
+}
 
 impl Hardware {
+    pub fn new() -> Self {
+        Hardware {
+            mpsse_divisor: AtomicU32::new(1),
+        }
+    }
+
     pub fn mpsse_set_gpio_value(&self, direction: u8, value: u8) {
         // TODO
     }
 
     // Set `divisor` for 6MHz clock
     pub fn mpsse_set_tck_divisor(&self, divisor: u32) {
-        // TODO
+        self.mpsse_divisor.store(divisor, Ordering::SeqCst);
     }
 
     // [0x1B] Clock Data Bits Out on -ve clock edge LSB first (no read)
     // CLK starts at 0
     pub fn mpsse_write_tdi_bits_lsb_mode0(&self, byte: u8, nbits: u8) {
+        let div = self.mpsse_divisor.load(Ordering::SeqCst);
+
+        extern "C" {
+            fn _write_tdi_bits_lsb_mode0_6mhz(byte: u8, nbits: u8, bsrr: *mut u32);
+            fn _write_tdi_bits_lsb_mode0_3mhz(byte: u8, nbits: u8, bsrr: *mut u32);
+            fn _write_tdi_bits_lsb_mode0_delay(byte: u8, nbits: u8, bsrr: *mut u32, delay: u32);
+        }
+
+        unsafe {
+            let gpio = unsafe { &*pac::GPIOA::ptr() };
+            let bsrr = &gpio.bsrr as *const _ as *mut u32;
+
+            match div {
+                0 => {},
+                1 => _write_tdi_bits_lsb_mode0_6mhz(byte, nbits, bsrr),
+                2 => _write_tdi_bits_lsb_mode0_3mhz(byte, nbits, bsrr),
+                n => _write_tdi_bits_lsb_mode0_delay(byte, nbits, bsrr, n - 3)
+            }
+        }
     }
 
     // [0x39] Clock Data Bytes In and Out LSB first
