@@ -5,12 +5,12 @@
 // TDO: 6
 // TMS: 4
 
-.section .text._write_tdi_bytes_lsb_mode0_12mhz
-.global _write_tdi_bytes_lsb_mode0_12mhz
+.section .text._write_tdi_bytes_lsb_mode0_6mhz
+.global _write_tdi_bytes_lsb_mode0_6mhz
 .syntax unified
 .thumb_func
 .cfi_startproc
-_write_tdi_bytes_lsb_mode0_12mhz:
+_write_tdi_bytes_lsb_mode0_6mhz:
     PUSH    {R4-R6,LR}
     CMP     R1, #0
     BEQ     2f
@@ -91,17 +91,17 @@ _write_tdi_bytes_lsb_mode0_12mhz:
 2:
     POP     {R4-R6,PC}
     .cfi_endproc
-    .size _write_tdi_bytes_lsb_mode0_12mhz, . - _write_tdi_bytes_lsb_mode0_12mhz
+    .size _write_tdi_bytes_lsb_mode0_6mhz, . - _write_tdi_bytes_lsb_mode0_6mhz
 
 
 
-.section .text._write_tdi_bytes_lsb_mode0_6mhz
-.global _write_tdi_bytes_lsb_mode0_6mhz
+.section .text._write_tdi_bytes_lsb_mode0_3mhz
+.global _write_tdi_bytes_lsb_mode0_3mhz
 .syntax unified
 .thumb_func
 .cfi_startproc
 .align 2
-_write_tdi_bytes_lsb_mode0_6mhz:
+_write_tdi_bytes_lsb_mode0_3mhz:
     PUSH    {R4-R7,LR}
     CMP     R1, #0
     BEQ     3f
@@ -143,7 +143,7 @@ _write_tdi_bytes_lsb_mode0_6mhz:
 3:
     POP     {R4-R7,PC}
     .cfi_endproc
-    .size _write_tdi_bytes_lsb_mode0_6mhz, . - _write_tdi_bytes_lsb_mode0_6mhz
+    .size _write_tdi_bytes_lsb_mode0_3mhz, . - _write_tdi_bytes_lsb_mode0_3mhz
 
 
 
@@ -210,14 +210,14 @@ _write_tdi_bytes_lsb_mode0_delay:
 
 
 
-// fn _write_tdi_bits_lsb_mode0_12mhz(byte: u8, nbits: u8, bsrr: *mut u32);
+// fn _write_tdi_bits_lsb_mode0_6mhz(byte: u8, nbits: u8, bsrr: *mut u32);
 // nbits is always 1..8
-.section .text._write_tdi_bits_lsb_mode0_12mhz
-.global _write_tdi_bits_lsb_mode0_12mhz
+.section .text._write_tdi_bits_lsb_mode0_6mhz
+.global _write_tdi_bits_lsb_mode0_6mhz
 .syntax unified
 .thumb_func
 .cfi_startproc
-_write_tdi_bits_lsb_mode0_12mhz:
+_write_tdi_bits_lsb_mode0_6mhz:
     PUSH    {R4-R5,LR}
 
     // Load bit constants for BSRR GPIO register
@@ -302,18 +302,18 @@ _write_tdi_bits_lsb_mode0_12mhz:
 
     POP     {R4-R5,PC}
     .cfi_endproc
-    .size _write_tdi_bits_lsb_mode0_12mhz, . - _write_tdi_bits_lsb_mode0_12mhz
+    .size _write_tdi_bits_lsb_mode0_6mhz, . - _write_tdi_bits_lsb_mode0_6mhz
 
 
 
-// fn _write_tdi_bits_lsb_mode0_6mhz(byte: u8, nbits: u8, bsrr: *mut u32);
+// fn _write_tdi_bits_lsb_mode0_3mhz(byte: u8, nbits: u8, bsrr: *mut u32);
 // nbits is always 1..8
-.section .text._write_tdi_bits_lsb_mode0_6mhz
-.global _write_tdi_bits_lsb_mode0_6mhz
+.section .text._write_tdi_bits_lsb_mode0_3mhz
+.global _write_tdi_bits_lsb_mode0_3mhz
 .syntax unified
 .thumb_func
 .cfi_startproc
-_write_tdi_bits_lsb_mode0_6mhz:
+_write_tdi_bits_lsb_mode0_3mhz:
     PUSH    {R4-R5,LR}
 
     // Load bit constants for BSRR GPIO register
@@ -350,7 +350,7 @@ _write_tdi_bits_lsb_mode0_6mhz:
 
     POP     {R4-R5,PC}
     .cfi_endproc
-    .size _write_tdi_bits_lsb_mode0_6mhz, . - _write_tdi_bits_lsb_mode0_6mhz
+    .size _write_tdi_bits_lsb_mode0_3mhz, . - _write_tdi_bits_lsb_mode0_3mhz
 
 
 
