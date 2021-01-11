@@ -107,16 +107,34 @@ fn test() {
             fn _write_tdi_bytes_lsb_mode0_12mhz(data_ptr: *const u8, data_size: usize, bsrr: *mut u32);
             fn _write_tdi_bytes_lsb_mode0_6mhz(data_ptr: *const u8, data_size: usize, bsrr: *mut u32);
             fn _write_tdi_bytes_lsb_mode0_delay(data_ptr: *const u8, data_size: usize, bsrr: *mut u32, delay: u32);
+            fn _write_tdi_bits_lsb_mode0_12mhz(byte: u8, nbits: u8, bsrr: *mut u32);
+            fn _write_tdi_bits_lsb_mode0_6mhz(byte: u8, nbits: u8, bsrr: *mut u32);
+            fn _write_tdi_bits_lsb_mode0_delay(byte: u8, nbits: u8, bsrr: *mut u32, delay: u32);
         }
         bsrr.write_volatile(SS0);
 
-        _write_tdi_bytes_lsb_mode0_12mhz(buf.as_ptr(), buf.len(), bsrr);
-        cortex_m::asm::delay(20);
+        _write_tdi_bits_lsb_mode0_12mhz(0b10110010, 8, bsrr);
+        cortex_m::asm::delay(10);
 
-        _write_tdi_bytes_lsb_mode0_6mhz(buf.as_ptr(), buf.len(), bsrr);
-        cortex_m::asm::delay(20);
+        _write_tdi_bits_lsb_mode0_6mhz(0b10110010, 8, bsrr);
+        cortex_m::asm::delay(10);
 
-        _write_tdi_bytes_lsb_mode0_delay(buf.as_ptr(), buf.len(), bsrr, 0);
+        _write_tdi_bits_lsb_mode0_delay(0b10110010, 8, bsrr, 0);
+        cortex_m::asm::delay(10);
+
+        _write_tdi_bits_lsb_mode0_delay(0b10110010, 8, bsrr, 1);
+        cortex_m::asm::delay(10);
+
+        _write_tdi_bits_lsb_mode0_delay(0b10110010, 8, bsrr, 2);
+        cortex_m::asm::delay(10);
+
+        // _write_tdi_bytes_lsb_mode0_12mhz(buf.as_ptr(), buf.len(), bsrr);
+        // cortex_m::asm::delay(20);
+        //
+        // _write_tdi_bytes_lsb_mode0_6mhz(buf.as_ptr(), buf.len(), bsrr);
+        // cortex_m::asm::delay(20);
+        //
+        // _write_tdi_bytes_lsb_mode0_delay(buf.as_ptr(), buf.len(), bsrr, 0);
 
         bsrr.write_volatile(SS1);
     }
