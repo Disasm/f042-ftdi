@@ -122,14 +122,14 @@ _write_tdi_bytes_lsb_mode0_3mhz:
     MOVS    R7, #7
 2:
     BICS    R3, R3, R6
-    STR     R3, [R2] // CLK0 + TDIx
+    STR     R3, [R2] // TCK0 + TDIx
     LSRS    R6, R6, #0x1
     MOV     R3, R4
     NOP
     NOP
     NOP
     SUBS    R7, 1
-    STR     R5, [R2] // CLK1
+    STR     R5, [R2] // TCK1
     NOP
     BPL     2b
 
@@ -138,7 +138,7 @@ _write_tdi_bytes_lsb_mode0_3mhz:
     BNE     1b
 
     LSLS    R5, R5, #0x10
-    STR     R5, [R2] // CLK0
+    STR     R5, [R2] // TCK0
 
 3:
     POP     {R4-R7,PC}
@@ -177,7 +177,7 @@ _write_tdi_bytes_lsb_mode0_delay:
     MOVS    R7, #7
 2:
     BICS    R3, R3, R6
-    STR     R3, [R2] // CLK0 + TDIx
+    STR     R3, [R2] // TCK0 + TDIx
     LSRS    R6, R6, #0x1
 
     MOV     R3, R12
@@ -186,7 +186,7 @@ _write_tdi_bytes_lsb_mode0_delay:
     BPL     5b
 
     NOP
-    STR     R5, [R2] // CLK1
+    STR     R5, [R2] // TCK1
 
     MOV     R3, R12
 6:  SUBS    R3, 1
@@ -201,7 +201,7 @@ _write_tdi_bytes_lsb_mode0_delay:
     BNE     1b
 
     LSLS    R5, R5, #0x10
-    STR     R5, [R2] // CLK0
+    STR     R5, [R2] // TCK0
 
 3:
     POP     {R4-R7,PC}
@@ -380,7 +380,7 @@ _write_tdi_bits_lsb_mode0_delay:
 
 1:
     BICS    R3, R3, R0
-    STR     R3, [R2] // CLK0 + TDIx
+    STR     R3, [R2] // TCK0 + TDIx
     LSRS    R0, R0, #0x1
     MOV     R3, R4 // reorder
 
@@ -389,7 +389,7 @@ _write_tdi_bits_lsb_mode0_delay:
 2:  SUBS    R6, 1
     BPL     2b
 
-    STR     R5, [R2] // CLK1
+    STR     R5, [R2] // TCK1
 
     MOV     R6, R12
 2:  SUBS    R6, 1
