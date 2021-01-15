@@ -53,8 +53,24 @@ impl Hardware {
     // [0x3B] Clock Data Bits In and Out LSB first
     // Out on -ve edge, in on +ve edge
     pub fn mpsse_transfer_tdi_bits_lsb_mode0(&self, byte: u8, nbits: u8) -> u8 {
-        // TODO
-        0x00
+        let div = self.mpsse_divisor.load(Ordering::SeqCst);
+
+        extern "C" {
+            fn _transfer_tdi_bits_lsb_mode0_4mhz(byte: u8, nbits: u8) -> u8;
+            fn _transfer_tdi_bits_lsb_mode0_2p8mhz(byte: u8, nbits: u8) -> u8;
+            fn _transfer_tdi_bits_lsb_mode0_2mhz(byte: u8, nbits: u8) -> u8;
+            fn _transfer_tdi_bits_lsb_mode0_delay(byte: u8, nbits: u8, delay: u32) -> u8;
+        }
+
+        unsafe {
+            match div {
+                0 => 0x00,
+                1 => _transfer_tdi_bits_lsb_mode0_4mhz(byte, nbits), // 6MHz -> 4MHz
+                2 => _transfer_tdi_bits_lsb_mode0_2p8mhz(byte, nbits), // 3MHz -> 2.8MHz
+                3 => _transfer_tdi_bits_lsb_mode0_2mhz(byte, nbits),
+                n => _transfer_tdi_bits_lsb_mode0_delay(byte, nbits, n - 4),
+            }
+        }
     }
 
     // [0x4B] Clock Data to TMS pin (no read)
