@@ -1,5 +1,7 @@
 .cfi_sections .debug_frame
 
+// GPIOA.IDR: 0x48000010
+// GPIOA.BSRR: 0x48000018
 // TCK: 5
 // TDI: 7
 // TDO: 6
@@ -412,3 +414,327 @@ _write_tdi_bits_lsb_mode0_delay:
     POP     {R4-R6,PC}
     .cfi_endproc
     .size _write_tdi_bits_lsb_mode0_delay, . - _write_tdi_bits_lsb_mode0_delay
+
+
+
+// fn _transfer_tdi_bits_lsb_mode0_4mhz(byte: u8, nbits: u8) -> u8;
+// nbits is always 1..8
+.section .text._transfer_tdi_bits_lsb_mode0_4mhz
+.global _transfer_tdi_bits_lsb_mode0_4mhz
+.syntax unified
+.thumb_func
+.cfi_startproc
+.align 2
+_transfer_tdi_bits_lsb_mode0_4mhz:
+    PUSH    {R4-R7,LR}
+
+    LDR     R2, =0x48000000 // GPIO base
+    MOVS    R6, #0x00000040 // R6 <- TDO mask
+    LDR     R4, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
+    MOVS    R5, #0x00000020 // R5 <- [TCK1]
+
+    // Invert byte
+    MVNS    R0, R0
+    UXTB    R0, R0
+
+    // Calculate 18*(8-nbits)-2 == -18*nbits+142
+    MOVS    R7, #18
+    MULS    R7, R1, R7
+    NEGS    R7, R7
+    ADDS    R7, #142
+
+    LSLS    R0, R0, #0x7
+    MOV     R3, R4
+    BICS    R3, R3, R0
+
+    // Jump to the beginning of the nth bit block
+    ADD     PC, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R5 // changed
+    LSLS    R3, R3, #0x10 // changed
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    STR     R3, [R2, #0x18] // TCK0
+
+    MOVS    R3, #32
+    SUBS    R3, R3, R1
+    LSRS    R0, R0, R3
+
+    POP     {R4-R7,PC}
+    .cfi_endproc
+    .size _transfer_tdi_bits_lsb_mode0_4mhz, . - _transfer_tdi_bits_lsb_mode0_4mhz
+
+
+
+// fn _transfer_tdi_bits_lsb_mode0_2p8mhz(byte: u8, nbits: u8) -> u8;
+// nbits is always 1..8
+.section .text._transfer_tdi_bits_lsb_mode0_2p8mhz
+.global _transfer_tdi_bits_lsb_mode0_2p8mhz
+.syntax unified
+.thumb_func
+.cfi_startproc
+.align 2
+_transfer_tdi_bits_lsb_mode0_2p8mhz:
+    PUSH    {R4-R7,LR}
+
+    MOV     R12, R1 // save nbits
+
+    LDR     R2, =0x48000000 // GPIO base
+    MOVS    R6, #0x00000040 // R6 <- TDO mask
+    LDR     R4, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
+    MOVS    R5, #0x00000020 // R5 <- [TCK1]
+
+    // Invert byte
+    MVNS    R0, R0
+    UXTB    R0, R0
+
+    LSLS    R0, R0, #0x7
+    SUBS    R1, #1
+
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    NOP
+    NOP
+    NOP
+    NOP
+1:
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+    //NOP
+
+    BICS    R3, R3, R0
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4 // reorder
+
+    SUBS    R1, #1
+    BPL     1b
+
+    MOVS    R3, #31
+    MOV     R1, R12
+    SUBS    R3, R3, R1
+    LSRS    R0, R0, R3
+
+    LSLS    R5, R5, #0x10
+    STR     R5, [R2, #0x18] // TCK0
+
+    POP     {R4-R7,PC}
+    .cfi_endproc
+    .size _transfer_tdi_bits_lsb_mode0_2p8mhz, . - _transfer_tdi_bits_lsb_mode0_2p8mhz
+
+
+
+// fn _transfer_tdi_bits_lsb_mode0_2mhz(byte: u8, nbits: u8) -> u8;
+// nbits is always 1..8
+.section .text._transfer_tdi_bits_lsb_mode0_2mhz
+.global _transfer_tdi_bits_lsb_mode0_2mhz
+.syntax unified
+.thumb_func
+.cfi_startproc
+.align 2
+_transfer_tdi_bits_lsb_mode0_2mhz:
+    PUSH    {R4-R7,LR}
+
+    MOV     R12, R1 // save nbits
+
+    LDR     R2, =0x48000000 // GPIO base
+    MOVS    R6, #0x00000040 // R6 <- TDO mask
+    LDR     R4, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
+    MOVS    R5, #0x00000020 // R5 <- [TCK1]
+
+    // Invert byte
+    MVNS    R0, R0
+    UXTB    R0, R0
+
+    LSLS    R0, R0, #0x7
+    SUBS    R1, #1
+
+    MOV     R3, R4
+    BICS    R3, R3, R0
+1:
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    SUBS    R1, #1
+    BPL     1b
+
+    MOVS    R3, #32
+    MOV     R1, R12
+    SUBS    R3, R3, R1
+    LSRS    R0, R0, R3
+
+    LSLS    R5, R5, #0x10
+    STR     R5, [R2, #0x18] // TCK0
+
+    POP     {R4-R7,PC}
+    .cfi_endproc
+    .size _transfer_tdi_bits_lsb_mode0_2mhz, . - _transfer_tdi_bits_lsb_mode0_2mhz
+
+
+
+// fn _transfer_tdi_bits_lsb_mode0_delay(byte: u8, nbits: u8, delay: u32) -> u8;
+// nbits is always 1..8
+.section .text._transfer_tdi_bits_lsb_mode0_delay
+.global _transfer_tdi_bits_lsb_mode0_delay
+.syntax unified
+.thumb_func
+.cfi_startproc
+.align 2
+_transfer_tdi_bits_lsb_mode0_delay:
+    PUSH    {R4-R7,LR}
+    MOV     R7, R8
+    PUSH    {R7}
+
+    MOV     R8, R2 // save delay
+    MOV     R12, R1 // save nbits
+
+    LDR     R2, =0x48000000 // GPIO base
+    MOVS    R6, #0x00000040 // R6 <- TDO mask
+    LDR     R4, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
+    MOVS    R5, #0x00000020 // R5 <- [TCK1]
+
+    // Invert byte
+    MVNS    R0, R0
+    UXTB    R0, R0
+
+    LSLS    R0, R0, #0x7
+    SUBS    R1, #1
+
+    MOV     R3, R4
+    BICS    R3, R3, R0
+1:
+    STR     R3, [R2, #0x18] // TCK0 + TDIx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4
+    BICS    R3, R3, R0
+
+    MOV     R7, R8
+    ADDS    R7, 1
+2:  SUBS    R7, 1
+    BPL     2b
+    NOP
+    NOP
+    NOP
+
+    STR     R5, [R2, #0x18] // TCK1
+    LDR     R7, [R2, #0x10] // read TDO
+    ANDS    R7, R7, R6
+    LSLS    R7, R7, #25
+    ORRS    R0, R0, R7
+
+    MOV     R7, R8
+2:  SUBS    R7, 1
+    BPL     2b
+
+    SUBS    R1, #1
+    BPL     1b
+
+    MOVS    R3, #32
+    MOV     R1, R12
+    SUBS    R3, R3, R1
+    LSRS    R0, R0, R3
+
+    LSLS    R5, R5, #0x10
+    STR     R5, [R2, #0x18] // TCK0
+
+    POP     {R7}
+    MOV     R8, R7
+    POP     {R4-R7,PC}
+    .cfi_endproc
+    .size _transfer_tdi_bits_lsb_mode0_delay, . - _transfer_tdi_bits_lsb_mode0_delay
