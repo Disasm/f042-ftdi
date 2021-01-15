@@ -5,6 +5,7 @@ use usb_device::prelude::*;
 use usb_device::class_prelude::*;
 use usb_device::Result;
 use usb_device::device::UsbDevice;
+use rtt_target::rprintln;
 
 const SIO_RESET_REQUEST: u8 = 0x00;
 const SIO_SET_MODEM_CTRL_REQUEST: u8 = 0x01;
@@ -255,6 +256,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
             }
             _ => {
                 // Unknown command, hang
+                rprintln!("Unknown command {:02x}", command);
                 0
             }
         }
