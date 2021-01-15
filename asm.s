@@ -10,6 +10,7 @@
 .syntax unified
 .thumb_func
 .cfi_startproc
+.align 2
 _write_tdi_bytes_lsb_mode0_6mhz:
     PUSH    {R4-R6,LR}
     CMP     R1, #0
@@ -217,6 +218,7 @@ _write_tdi_bytes_lsb_mode0_delay:
 .syntax unified
 .thumb_func
 .cfi_startproc
+.align 2
 _write_tdi_bits_lsb_mode0_6mhz:
     PUSH    {R4-R5,LR}
 
@@ -313,6 +315,7 @@ _write_tdi_bits_lsb_mode0_6mhz:
 .syntax unified
 .thumb_func
 .cfi_startproc
+.align 2
 _write_tdi_bits_lsb_mode0_3mhz:
     PUSH    {R4-R5,LR}
 
@@ -361,6 +364,7 @@ _write_tdi_bits_lsb_mode0_3mhz:
 .syntax unified
 .thumb_func
 .cfi_startproc
+.align 2
 _write_tdi_bits_lsb_mode0_delay:
     PUSH    {R4-R6,LR}
 
