@@ -12,8 +12,76 @@ impl Hardware {
         }
     }
 
+    pub fn set_gpio_direction_mpsse(&self, direction: u8) {
+        unsafe {
+            let gpio = &*pac::GPIOA::ptr();
+            gpio.moder.modify(|_, w| {
+                if direction & 0b0000_0001 != 0 {
+                    w.moder5().output();
+                } else {
+                    w.moder5().input();
+                }
+
+                if direction & 0b0000_0010 != 0 {
+                    w.moder7().output();
+                } else {
+                    w.moder7().input();
+                }
+
+                if direction & 0b0000_0100 != 0 {
+                    w.moder6().output();
+                } else {
+                    w.moder6().input();
+                }
+
+                if direction & 0b0000_1000 != 0 {
+                    w.moder4().output();
+                } else {
+                    w.moder4().input();
+                }
+
+                w
+            });
+        }
+    }
+
+    pub fn set_gpio_direction_serial(&self, direction: u8) {
+        let _ = direction;
+    }
+
     pub fn mpsse_set_gpio_value(&self, direction: u8, value: u8) {
-        // TODO
+        self.set_gpio_direction_mpsse(direction);
+
+        unsafe {
+            let gpio = &*pac::GPIOA::ptr();
+            gpio.bsrr.write(|w| {
+                if value & 0b0000_0001 != 0 {
+                    w.bs5().set_bit();
+                } else {
+                    w.br5().set_bit();
+                }
+
+                if value & 0b0000_0010 != 0 {
+                    w.bs7().set_bit();
+                } else {
+                    w.br7().set_bit();
+                }
+
+                if value & 0b0000_0100 != 0 {
+                    w.bs6().set_bit();
+                } else {
+                    w.br6().set_bit();
+                }
+
+                if value & 0b0000_1000 != 0 {
+                    w.bs4().set_bit();
+                } else {
+                    w.br4().set_bit();
+                }
+
+                w
+            });
+        }
     }
 
     // Set `divisor` for 6MHz clock
