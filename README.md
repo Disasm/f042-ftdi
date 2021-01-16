@@ -2,6 +2,8 @@
 
 > A proof-of-concept FT2232D emulation firmware for an STM32F042 microcontroller.
 
+Warning: this project is not finished yet, lots of FTDI commands are not implemented.
+
 ## Pinout
 
 | FTDI signal  | STM32 pin |
