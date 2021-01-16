@@ -1,14 +1,16 @@
-use core::sync::atomic::{AtomicU32, Ordering};
+use core::sync::atomic::{AtomicU32, Ordering, AtomicU8};
 use stm32f0xx_hal::pac;
 
 pub struct Hardware {
     mpsse_divisor: AtomicU32,
+    shifted: AtomicU8,
 }
 
 impl Hardware {
     pub fn new() -> Self {
         Hardware {
             mpsse_divisor: AtomicU32::new(1),
+            shifted: AtomicU8::new(0),
         }
     }
 
@@ -134,7 +136,7 @@ impl Hardware {
             fn _transfer_tdi_bits_lsb_mode0_delay(byte: u8, nbits: u8, delay: u32) -> u8;
         }
 
-        unsafe {
+        let bits = unsafe {
             match div {
                 0 => 0x00,
                 1 => _transfer_tdi_bits_lsb_mode0_4mhz(byte, nbits), // 6MHz -> 4MHz
@@ -142,7 +144,14 @@ impl Hardware {
                 3 => _transfer_tdi_bits_lsb_mode0_2mhz(byte, nbits),
                 n => _transfer_tdi_bits_lsb_mode0_delay(byte, nbits, n - 4),
             }
-        }
+        };
+
+        let mut shifted = self.shifted.load(Ordering::SeqCst) as u16;
+        shifted = shifted | ((bits as u16) << 8);
+        shifted = shifted >> nbits;
+        let byte = shifted as u8;
+        self.shifted.store(byte, Ordering::SeqCst);
+        byte
     }
 
     // [0x4B] Clock Data to TMS pin (no read)
@@ -192,7 +201,7 @@ impl Hardware {
             fn _transfer_tms_bits_mode0_delay(byte: u8, nbits: u8, delay: u32) -> u8;
         }
 
-        unsafe {
+        let bits = unsafe {
             match div {
                 0 => 0x00,
                 1 => _transfer_tms_bits_mode0_4mhz(byte, nbits), // 6MHz -> 4MHz
@@ -200,7 +209,13 @@ impl Hardware {
                 3 => _transfer_tms_bits_mode0_2mhz(byte, nbits),
                 n => _transfer_tms_bits_mode0_delay(byte, nbits, n - 4),
             }
-        }
+        };
+        let mut shifted = self.shifted.load(Ordering::SeqCst) as u16;
+        shifted = shifted | ((bits as u16) << 8);
+        shifted = shifted >> nbits;
+        let byte = shifted as u8;
+        self.shifted.store(byte, Ordering::SeqCst);
+        byte
     }
 
     pub fn serial_set_baud_rate(&self, baud_rate: u32) {
