@@ -20,7 +20,7 @@ Warning: this project is not finished yet, lots of FTDI commands are not impleme
 
 You will need a [NUCLEO-F042K6] board to run the firmware.
 
-[Install Rust](https://www.rust-lang.org/tools/install):
+[Install Rust]:
 
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
