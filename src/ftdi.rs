@@ -138,7 +138,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                     }).ok();
                 } else {
                     // Not supported
-                    tx_buffer.write_all(nbytes, |buffer| {
+                    tx_buffer.write_all(nbytes, |_buffer| {
                         Result::Ok(nbytes)
                     }).ok();
                 }

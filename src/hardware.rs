@@ -101,7 +101,7 @@ impl Hardware {
         }
 
         unsafe {
-            let gpio = unsafe { &*pac::GPIOA::ptr() };
+            let gpio = &*pac::GPIOA::ptr();
             let bsrr = &gpio.bsrr as *const _ as *mut u32;
 
             match div {
