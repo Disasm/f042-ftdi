@@ -738,3 +738,221 @@ _transfer_tdi_bits_lsb_mode0_delay:
     POP     {R4-R7,PC}
     .cfi_endproc
     .size _transfer_tdi_bits_lsb_mode0_delay, . - _transfer_tdi_bits_lsb_mode0_delay
+
+
+
+// fn _write_tms_bits_mode0_6mhz(byte: u8, nbits: u8);
+// nbits is always 1..7
+.section .text._write_tms_bits_mode0_6mhz
+.global _write_tms_bits_mode0_6mhz
+.syntax unified
+.thumb_func
+.cfi_startproc
+.align 2
+_write_tms_bits_mode0_6mhz:
+    PUSH    {R4-R5,LR}
+
+    LDR     R2, =0x48000018 // BSRR address
+
+    // Load bit constants for BSRR GPIO register
+    LDR     R4, =0x00300010 // R4 <- [TCK0+TMS0+TMS1]
+    MOVS    R5, #0x00000020 // R5 <- [TCK1]
+
+    // Invert byte
+    MVNS    R0, R0
+    UXTB    R0, R0
+
+    // Calculate 12*(8-nbits)-2 == -12*nbits+94
+    MOVS    R3, #12
+    MULS    R1, R3, R1
+    NEGS    R1, R1
+    ADDS    R1, #94
+
+    // R0 bit 7 already matches TDI position
+    LDR     R3, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+
+    LSLS    R0, R0, #0x5 // TMS offset + 1
+    MOV     R3, R4 // reorder
+
+    // Jump to the beginning of the nth bit block
+    ADD     PC, R1
+
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+    MOV     R3, R4
+    NOP
+    STR     R5, [R2]
+
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+    MOV     R3, R4
+    NOP
+    STR     R5, [R2]
+
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+    MOV     R3, R4
+    NOP
+    STR     R5, [R2]
+
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+    MOV     R3, R4
+    NOP
+    STR     R5, [R2]
+
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+    MOV     R3, R4
+    NOP
+    STR     R5, [R2]
+
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+    MOV     R3, R4
+    NOP
+    STR     R5, [R2]
+
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+    MOV     R3, R4
+    NOP
+    STR     R5, [R2]
+
+    NOP
+    LSLS    R5, R5, #0x10
+    STR     R5, [R2]
+
+    POP     {R4-R5,PC}
+    .cfi_endproc
+    .size _write_tms_bits_mode0_6mhz, . - _write_tms_bits_mode0_6mhz
+
+
+
+// fn _write_tms_bits_mode0_3mhz(byte: u8, nbits: u8);
+// nbits is always 1..7
+.section .text._write_tms_bits_mode0_3mhz
+.global _write_tms_bits_mode0_3mhz
+.syntax unified
+.thumb_func
+.cfi_startproc
+.align 2
+_write_tms_bits_mode0_3mhz:
+    PUSH    {R4-R5,LR}
+
+    LDR     R2, =0x48000018 // BSRR address
+
+    // Load bit constants for BSRR GPIO register
+    LDR     R4, =0x00300010 // R4 <- [TCK0+TMS0+TMS1]
+    MOVS    R5, #0x00000020 // R5 <- [TCK1]
+
+    // Invert byte
+    MVNS    R0, R0
+    UXTB    R0, R0
+
+    // R0 bit 7 already matches TDI position
+    LDR     R3, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+
+    LSLS    R0, R0, #0x5 // TMS offset + 1
+    MOV     R3, R4 // reorder
+    SUBS    R1, #1
+
+1:
+    LSRS    R0, R0, #0x1
+    BICS    R3, R3, R0
+    STR     R3, [R2] // TCK0 + TMSx
+    MOV     R3, R4 // reorder
+    NOP
+    NOP
+    NOP
+    NOP
+    SUBS    R1, #1
+    STR     R5, [R2] // TCK1
+    BPL     1b
+
+    NOP
+    NOP
+    NOP
+    NOP
+    LSLS    R5, R5, #0x10
+    STR     R5, [R2] // TCK0
+
+    POP     {R4-R5,PC}
+    .cfi_endproc
+    .size _write_tms_bits_mode0_3mhz, . - _write_tms_bits_mode0_3mhz
+
+
+
+// fn _write_tms_bits_mode0_delay(byte: u8, nbits: u8, delay: u32);
+// nbits is always 1..7
+.section .text._write_tms_bits_mode0_delay
+.global _write_tms_bits_mode0_delay
+.syntax unified
+.thumb_func
+.cfi_startproc
+.align 2
+_write_tms_bits_mode0_delay:
+    PUSH    {R4-R6,LR}
+
+    MOV     R12, R2 // save delay
+
+    LDR     R2, =0x48000018 // BSRR address
+
+    // Load bit constants for BSRR GPIO register
+    LDR     R4, =0x00300010 // R4 <- [TCK0+TMS0+TMS1]
+    MOVS    R5, #0x00000020 // R5 <- [TCK1]
+
+    // Invert byte
+    MVNS    R0, R0
+    UXTB    R0, R0
+
+    // R0 bit 7 already matches TDI position
+    LDR     R3, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
+    BICS    R3, R3, R0
+    STR     R3, [R2]
+
+    LSLS    R0, R0, #0x4 // TMS offset
+    MOV     R3, R4 // reorder
+    SUBS    R1, #1
+
+1:
+    BICS    R3, R3, R0
+    STR     R3, [R2] // TCK0 + TMSx
+    LSRS    R0, R0, #0x1
+    MOV     R3, R4 // reorder
+
+    MOV     R6, R12
+    ADDS    R6, 1
+2:  SUBS    R6, 1
+    BPL     2b
+
+    STR     R5, [R2] // TCK1
+
+    MOV     R6, R12
+2:  SUBS    R6, 1
+    BPL     2b
+
+    SUBS    R1, #1
+    BPL     1b
+
+    NOP
+    NOP
+    NOP
+    NOP
+    LSLS    R5, R5, #0x10
+    STR     R5, [R2] // TCK0
+
+    POP     {R4-R6,PC}
+    .cfi_endproc
+    .size _write_tms_bits_mode0_delay, . - _write_tms_bits_mode0_delay
