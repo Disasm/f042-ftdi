@@ -150,7 +150,26 @@ impl Hardware {
     // Bit 7 of the Byte1 is passed on to TDI/DO before the first clk of TMS
     // and is held static for the duration of TMS clocking.
     pub fn mpsse_write_tms_bits_lsb_mode0(&self, byte: u8, nbits: u8) {
-        // TODO
+        if nbits > 7 {
+            return;
+        }
+
+        let div = self.mpsse_divisor.load(Ordering::SeqCst);
+
+        extern "C" {
+            fn _write_tms_bits_mode0_6mhz(byte: u8, nbits: u8);
+            fn _write_tms_bits_mode0_3mhz(byte: u8, nbits: u8);
+            fn _write_tms_bits_mode0_delay(byte: u8, nbits: u8, delay: u32);
+        }
+
+        unsafe {
+            match div {
+                0 => {},
+                1 => _write_tms_bits_mode0_6mhz(byte, nbits),
+                2 => _write_tms_bits_mode0_3mhz(byte, nbits),
+                n => _write_tms_bits_mode0_delay(byte, nbits, n - 3),
+            }
+        }
     }
 
     // [0x6B] Clock Data to TMS pin with read
