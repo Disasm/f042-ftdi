@@ -179,8 +179,28 @@ impl Hardware {
     // sampled for the duration of TMS and a byte containing the data is passed
     // back at the end of TMS clocking.
     pub fn mpsse_transfer_tms_bits_lsb_mode0(&self, byte: u8, nbits: u8) -> u8 {
-        // TODO
-        0x00
+        if nbits > 7 {
+            return 0x00;
+        }
+
+        let div = self.mpsse_divisor.load(Ordering::SeqCst);
+
+        extern "C" {
+            fn _transfer_tms_bits_mode0_4mhz(byte: u8, nbits: u8) -> u8;
+            fn _transfer_tms_bits_mode0_2p8mhz(byte: u8, nbits: u8) -> u8;
+            fn _transfer_tms_bits_mode0_2mhz(byte: u8, nbits: u8) -> u8;
+            fn _transfer_tms_bits_mode0_delay(byte: u8, nbits: u8, delay: u32) -> u8;
+        }
+
+        unsafe {
+            match div {
+                0 => 0x00,
+                1 => _transfer_tms_bits_mode0_4mhz(byte, nbits), // 6MHz -> 4MHz
+                2 => _transfer_tms_bits_mode0_2p8mhz(byte, nbits), // 3MHz -> 2.8MHz
+                3 => _transfer_tms_bits_mode0_2mhz(byte, nbits),
+                n => _transfer_tms_bits_mode0_delay(byte, nbits, n - 4),
+            }
+        }
     }
 
     pub fn serial_set_baud_rate(&self, baud_rate: u32) {
