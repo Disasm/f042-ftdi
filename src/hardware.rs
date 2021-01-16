@@ -47,7 +47,11 @@ impl Hardware {
 
     // [0x39] Clock Data Bytes In and Out LSB first
     // Out on -ve edge, in on +ve edge
-    pub fn mpsse_transfer_tdi_bytes_lsb_mode0(&self, rx_bytes: &[u8], tx_bytes: &mut [u8]) {
+    pub fn mpsse_transfer_tdi_bytes_lsb_mode0(&self, tdi_bytes: &[u8], tdo_bytes: &mut [u8]) {
+        // TODO: improve
+        for (tdi, tdo) in tdi_bytes.iter().zip(tdo_bytes.iter_mut()) {
+            *tdo = self.mpsse_transfer_tdi_bits_lsb_mode0(*tdi, 8);
+        }
     }
 
     // [0x3B] Clock Data Bits In and Out LSB first
