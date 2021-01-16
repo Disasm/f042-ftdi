@@ -352,8 +352,19 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
             }
             FtdiMode::MPSSE => {
                 if tx_buffer.available_read() > 0 {
-                    tx_buffer.read(write_ep.max_packet_size() as usize, |bytes| {
-                        write_ep.write(bytes)
+                    let mut buf: [u8; 64] = unsafe { MaybeUninit::uninit().assume_init() };
+                    buf[0] = 0x31;
+                    if tx_buffer.available_read() > 62 {
+                        buf[1] = 0x00;
+                    } else {
+                        buf[1] = 0x60;
+                    }
+
+                    tx_buffer.read(62, |bytes| {
+                        // `bytes` slice is max 62 bytes, so copy everything we got
+                        buf[2..2 + bytes.len()].copy_from_slice(bytes);
+
+                        write_ep.write(&buf[..2 + bytes.len()]).map(|n| n - 2)
                     }).ok();
                 }
             }
