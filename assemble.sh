@@ -11,3 +11,5 @@ rm -f bin/*.a
 
 arm-none-eabi-as -g -march=armv6-m asm.s -o bin/$crate.o
 ar crs bin/thumbv6m-none-eabi.a bin/$crate.o
+
+rm bin/$crate.o
