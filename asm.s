@@ -762,11 +762,11 @@ _write_tms_bits_mode0_6mhz:
     MVNS    R0, R0
     UXTB    R0, R0
 
-    // Calculate 12*(8-nbits)-2 == -12*nbits+94
+    // Calculate 12*(7-nbits)-2 == -12*nbits+82
     MOVS    R3, #12
     MULS    R1, R3, R1
     NEGS    R1, R1
-    ADDS    R1, #94
+    ADDS    R1, #82
 
     // R0 bit 7 already matches TDI position
     LDR     R3, =0x00a00080 // R4 <- [TCK0+TDI0+TDI1]
