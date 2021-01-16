@@ -439,7 +439,7 @@ impl<B: UsbBus> UsbClass<B> for FtdiPort<'_, B> {
                 xfer.accept().ok();
             }
             SIO_SET_BITMODE_REQUEST => {
-                let _bit_mask = req.value as u8;
+                let bit_mask = req.value as u8;
                 let bit_mode = (req.value >> 8) as u8;
 
                 let new_mode = match bit_mode {
@@ -449,7 +449,10 @@ impl<B: UsbBus> UsbClass<B> for FtdiPort<'_, B> {
                 };
                 self.current_mode = new_mode;
 
-                // TODO: process bitmask
+                match self.fixed_mode {
+                    FtdiMode::Serial => self.hardware.set_gpio_direction_serial(bit_mask),
+                    FtdiMode::MPSSE => self.hardware.set_gpio_direction_mpsse(bit_mask),
+                }
 
                 xfer.accept().ok();
             }
