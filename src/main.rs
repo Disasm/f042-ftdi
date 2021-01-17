@@ -1,5 +1,3 @@
-//! CDC-ACM serial port example using polling in a busy loop.
-//! Target board: NUCLEO-F042K6
 #![no_std]
 #![no_main]
 
