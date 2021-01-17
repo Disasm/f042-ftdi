@@ -11,10 +11,7 @@ fn main() {
 
     let target = env::var("TARGET").unwrap();
     let name = env::var("CARGO_PKG_NAME").unwrap();
-    fs::copy(
-        format!("bin/{}.a", target),
-        out_dir.join(format!("lib{}.a", name)),
-    ).unwrap();
+    fs::copy(format!("bin/{}.a", target), out_dir.join(format!("lib{}.a", name))).unwrap();
     println!("cargo:rustc-link-lib=static={}", name);
     println!("cargo:rerun-if-changed=bin/{}.a", target);
 }

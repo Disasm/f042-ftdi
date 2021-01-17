@@ -1,11 +1,11 @@
 use crate::buffer::Buffer;
 use crate::hardware::Hardware;
 use core::mem::MaybeUninit;
-use usb_device::prelude::*;
-use usb_device::class_prelude::*;
-use usb_device::Result;
-use usb_device::device::UsbDevice;
 use rtt_target::rprintln;
+use usb_device::class_prelude::*;
+use usb_device::device::UsbDevice;
+use usb_device::prelude::*;
+use usb_device::Result;
 
 const SIO_RESET_REQUEST: u8 = 0x00;
 const SIO_SET_MODEM_CTRL_REQUEST: u8 = 0x01;
@@ -49,11 +49,7 @@ pub struct FtdiPort<'a, B: UsbBus> {
 }
 
 impl<'a, B: UsbBus> FtdiPort<'a, B> {
-    pub fn new<'b: 'a>(
-        alloc: &'b UsbBusAllocator<B>,
-        hardware: &'a Hardware,
-        fixed_mode: FtdiMode,
-    ) -> FtdiPort<'a, B> {
+    pub fn new<'b: 'a>(alloc: &'b UsbBusAllocator<B>, hardware: &'a Hardware, fixed_mode: FtdiMode) -> FtdiPort<'a, B> {
         let interface = alloc.interface();
 
         let read_ep_addr = EndpointAddress::from(0x02 + u8::from(interface) * 2);
@@ -109,7 +105,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                     return 0;
                 }
 
-                hardware.mpsse_write_tdi_bytes_lsb_mode0(&data[3..3+nbytes]);
+                hardware.mpsse_write_tdi_bytes_lsb_mode0(&data[3..3 + nbytes]);
 
                 3 + nbytes
             }
@@ -147,15 +143,15 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 }
 
                 if command == 0x39 {
-                    tx_buffer.write_all(nbytes, |buffer| {
-                        hardware.mpsse_transfer_tdi_bytes_lsb_mode0(&data[3..3+nbytes], buffer);
-                        Result::Ok(nbytes)
-                    }).ok();
+                    tx_buffer
+                        .write_all(nbytes, |buffer| {
+                            hardware.mpsse_transfer_tdi_bytes_lsb_mode0(&data[3..3 + nbytes], buffer);
+                            Result::Ok(nbytes)
+                        })
+                        .ok();
                 } else {
                     // Not supported
-                    tx_buffer.write_all(nbytes, |_buffer| {
-                        Result::Ok(nbytes)
-                    }).ok();
+                    tx_buffer.write_all(nbytes, |_buffer| Result::Ok(nbytes)).ok();
                 }
 
                 3 + nbytes
@@ -179,10 +175,12 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                     response = 0; // Not supported
                 }
 
-                tx_buffer.write_all(1, |buffer| {
-                    buffer[0] = response;
-                    Result::Ok(1)
-                }).ok();
+                tx_buffer
+                    .write_all(1, |buffer| {
+                        buffer[0] = response;
+                        Result::Ok(1)
+                    })
+                    .ok();
 
                 3
             }
@@ -216,10 +214,12 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                     response = 0; // Not supported
                 }
 
-                tx_buffer.write_all(1, |buffer| {
-                    buffer[0] = response;
-                    Result::Ok(1)
-                }).ok();
+                tx_buffer
+                    .write_all(1, |buffer| {
+                        buffer[0] = response;
+                        Result::Ok(1)
+                    })
+                    .ok();
 
                 3
             }
@@ -293,12 +293,14 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 let tx_buffer = &mut self.tx_buffer;
                 if rx_buffer.available_read() > 0 && tx_buffer.available_write() > 0 {
                     let n = core::cmp::min(rx_buffer.available_read(), tx_buffer.available_write());
-                    tx_buffer.write_all(n, |buffer| {
-                        rx_buffer.read(n, |data| {
-                            buffer.copy_from_slice(data);
-                            Result::Ok(data.len())
+                    tx_buffer
+                        .write_all(n, |buffer| {
+                            rx_buffer.read(n, |data| {
+                                buffer.copy_from_slice(data);
+                                Result::Ok(data.len())
+                            })
                         })
-                    }).ok();
+                        .ok();
                 } else if rx_buffer.available_read() > 0 && tx_buffer.available_write() == 0 {
                     // Discard all the data
                     rx_buffer.clear();
@@ -308,10 +310,13 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                 let hardware = self.hardware;
                 let tx_buffer = &mut self.tx_buffer;
                 while self.rx_buffer.available_read() > 0 {
-                    let n = self.rx_buffer.read(usize::MAX, |buffer| {
-                        let n = Self::process_mpsse_command(hardware, buffer, tx_buffer);
-                        Result::Ok(n)
-                    }).unwrap();
+                    let n = self
+                        .rx_buffer
+                        .read(usize::MAX, |buffer| {
+                            let n = Self::process_mpsse_command(hardware, buffer, tx_buffer);
+                            Result::Ok(n)
+                        })
+                        .unwrap();
 
                     if n == 0 {
                         break;
@@ -336,13 +341,13 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
         // Nothing happens on error or if there is no space in the buffer.
         let rx_buffer = &mut self.rx_buffer;
         let read_ep = &mut self.read_ep;
-        rx_buffer.write_all(read_ep.max_packet_size() as usize, |buf| {
-            match read_ep.read(buf) {
+        rx_buffer
+            .write_all(read_ep.max_packet_size() as usize, |buf| match read_ep.read(buf) {
                 Ok(n) => Ok(n),
                 Err(UsbError::WouldBlock) => Ok(0),
                 Err(err) => Err(err),
-            }
-        }).ok();
+            })
+            .ok();
     }
 
     fn process_tx(&mut self) {
@@ -355,12 +360,14 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                     let mut buf: [u8; 64] = unsafe { MaybeUninit::uninit().assume_init() };
                     buf[0] = 0x01;
                     buf[1] = 0x60;
-                    tx_buffer.read(62, |bytes| {
-                        // `bytes` slice is max 62 bytes, so copy everything we got
-                        buf[2..2 + bytes.len()].copy_from_slice(bytes);
+                    tx_buffer
+                        .read(62, |bytes| {
+                            // `bytes` slice is max 62 bytes, so copy everything we got
+                            buf[2..2 + bytes.len()].copy_from_slice(bytes);
 
-                        write_ep.write(&buf[..2 + bytes.len()]).map(|n| n - 2)
-                    }).ok();
+                            write_ep.write(&buf[..2 + bytes.len()]).map(|n| n - 2)
+                        })
+                        .ok();
                 } else {
                     write_ep.write(&[0x01, 0x60]).ok();
                 }
@@ -375,12 +382,14 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                         buf[1] = 0x60;
                     }
 
-                    tx_buffer.read(62, |bytes| {
-                        // `bytes` slice is max 62 bytes, so copy everything we got
-                        buf[2..2 + bytes.len()].copy_from_slice(bytes);
+                    tx_buffer
+                        .read(62, |bytes| {
+                            // `bytes` slice is max 62 bytes, so copy everything we got
+                            buf[2..2 + bytes.len()].copy_from_slice(bytes);
 
-                        write_ep.write(&buf[..2 + bytes.len()]).map(|n| n - 2)
-                    }).ok();
+                            write_ep.write(&buf[..2 + bytes.len()]).map(|n| n - 2)
+                        })
+                        .ok();
                 }
             }
         }

@@ -9,14 +9,13 @@ mod buffer;
 mod ftdi;
 mod hardware;
 
-use crate::ftdi::{FtdiPort, FtdiMode};
+use crate::ftdi::{FtdiMode, FtdiPort};
 use crate::hardware::Hardware;
 use cortex_m_rt::entry;
+use rtt_target::{rprintln, rtt_init_print};
+use stm32f0xx_hal::rcc::HSEBypassMode;
 use stm32f0xx_hal::usb::{Peripheral, UsbBus};
 use stm32f0xx_hal::{pac, prelude::*};
-use stm32f0xx_hal::rcc::HSEBypassMode;
-use rtt_target::{rprintln, rtt_init_print};
-
 
 #[entry]
 fn main() -> ! {

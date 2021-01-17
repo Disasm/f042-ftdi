@@ -94,11 +94,7 @@ impl<S: BorrowMut<[u8]>> Buffer<S> {
     // for reading. The closure should return the number of bytes actually read and is allowed to
     // read less than max_bytes. If the callback returns an error, the data is not discarded from
     // the buffer.
-    pub fn read<E>(
-        &mut self,
-        max_count: usize,
-        f: impl FnOnce(&[u8]) -> Result<usize, E>,
-    ) -> Result<usize, E> {
+    pub fn read<E>(&mut self, max_count: usize, f: impl FnOnce(&[u8]) -> Result<usize, E>) -> Result<usize, E> {
         let count = cmp::min(max_count, self.available_read());
 
         f(&self.store.borrow()[self.rpos..self.rpos + count]).map(|count| {

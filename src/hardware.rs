@@ -1,4 +1,4 @@
-use core::sync::atomic::{AtomicU32, Ordering, AtomicU8};
+use core::sync::atomic::{AtomicU32, AtomicU8, Ordering};
 use stm32f0xx_hal::pac;
 
 pub struct Hardware {
@@ -107,10 +107,10 @@ impl Hardware {
             let bsrr = &gpio.bsrr as *const _ as *mut u32;
 
             match div {
-                0 => {},
+                0 => {}
                 1 => _write_tdi_bytes_lsb_mode0_6mhz(bytes.as_ptr(), bytes.len(), bsrr),
                 2 => _write_tdi_bytes_lsb_mode0_3mhz(bytes.as_ptr(), bytes.len(), bsrr),
-                n => _write_tdi_bytes_lsb_mode0_delay(bytes.as_ptr(), bytes.len(), bsrr, n - 3)
+                n => _write_tdi_bytes_lsb_mode0_delay(bytes.as_ptr(), bytes.len(), bsrr, n - 3),
             }
         }
     }
@@ -131,10 +131,10 @@ impl Hardware {
             let bsrr = &gpio.bsrr as *const _ as *mut u32;
 
             match div {
-                0 => {},
+                0 => {}
                 1 => _write_tdi_bits_lsb_mode0_6mhz(byte, nbits, bsrr),
                 2 => _write_tdi_bits_lsb_mode0_3mhz(byte, nbits, bsrr),
-                n => _write_tdi_bits_lsb_mode0_delay(byte, nbits, bsrr, n - 3)
+                n => _write_tdi_bits_lsb_mode0_delay(byte, nbits, bsrr, n - 3),
             }
         }
     }
@@ -197,7 +197,7 @@ impl Hardware {
 
         unsafe {
             match div {
-                0 => {},
+                0 => {}
                 1 => _write_tms_bits_mode0_6mhz(byte, nbits),
                 2 => _write_tms_bits_mode0_3mhz(byte, nbits),
                 n => _write_tms_bits_mode0_delay(byte, nbits, n - 3),
