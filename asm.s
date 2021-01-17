@@ -7,6 +7,8 @@
 // TDO: 6
 // TMS: 4
 
+// fn _write_tdi_bytes_lsb_mode0_6mhz(bytes: *const u8, count: usize, bsrr: *mut u32);
+// count is always >0
 .section .text._write_tdi_bytes_lsb_mode0_6mhz
 .global _write_tdi_bytes_lsb_mode0_6mhz
 .syntax unified
@@ -98,6 +100,8 @@ _write_tdi_bytes_lsb_mode0_6mhz:
 
 
 
+// fn _write_tdi_bytes_lsb_mode0_3mhz(bytes: *const u8, count: usize, bsrr: *mut u32);
+// count is always >0
 .section .text._write_tdi_bytes_lsb_mode0_3mhz
 .global _write_tdi_bytes_lsb_mode0_3mhz
 .syntax unified
@@ -150,6 +154,8 @@ _write_tdi_bytes_lsb_mode0_3mhz:
 
 
 
+// fn _write_tdi_bytes_lsb_mode0_delay(bytes: *const u8, count: usize, bsrr: *mut u32, delay: u32);
+// count is always >0
 .section .text._write_tdi_bytes_lsb_mode0_delay
 .global _write_tdi_bytes_lsb_mode0_delay
 .syntax unified
