@@ -148,7 +148,7 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
 
                 if command == 0x39 {
                     tx_buffer.write_all(nbytes, |buffer| {
-                        hardware.mpsse_transfer_tdi_bytes_lsb_mode0(&data[2..2+nbytes], buffer);
+                        hardware.mpsse_transfer_tdi_bytes_lsb_mode0(&data[3..3+nbytes], buffer);
                         Result::Ok(nbytes)
                     }).ok();
                 } else {
