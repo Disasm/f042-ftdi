@@ -91,6 +91,30 @@ impl Hardware {
         self.mpsse_divisor.store(divisor, Ordering::SeqCst);
     }
 
+    // [0x19] Clock Data Bytes Out on -ve clock edge LSB first (no read)
+    // CLK starts at 0
+    pub fn mpsse_write_tdi_bytes_lsb_mode0(&self, bytes: &[u8]) {
+        let div = self.mpsse_divisor.load(Ordering::SeqCst);
+
+        extern "C" {
+            fn _write_tdi_bytes_lsb_mode0_6mhz(bytes: *const u8, count: usize, bsrr: *mut u32);
+            fn _write_tdi_bytes_lsb_mode0_3mhz(bytes: *const u8, count: usize, bsrr: *mut u32);
+            fn _write_tdi_bytes_lsb_mode0_delay(bytes: *const u8, count: usize, bsrr: *mut u32, delay: u32);
+        }
+
+        unsafe {
+            let gpio = &*pac::GPIOA::ptr();
+            let bsrr = &gpio.bsrr as *const _ as *mut u32;
+
+            match div {
+                0 => {},
+                1 => _write_tdi_bytes_lsb_mode0_6mhz(bytes.as_ptr(), bytes.len(), bsrr),
+                2 => _write_tdi_bytes_lsb_mode0_3mhz(bytes.as_ptr(), bytes.len(), bsrr),
+                n => _write_tdi_bytes_lsb_mode0_delay(bytes.as_ptr(), bytes.len(), bsrr, n - 3)
+            }
+        }
+    }
+
     // [0x1B] Clock Data Bits Out on -ve clock edge LSB first (no read)
     // CLK starts at 0
     pub fn mpsse_write_tdi_bits_lsb_mode0(&self, byte: u8, nbits: u8) {

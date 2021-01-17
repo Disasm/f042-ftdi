@@ -98,6 +98,21 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
 
         let command = data[0];
         match command {
+            0x19 => {
+                // Clock Data Bytes Out on -ve clock edge LSB first (no read)
+                if data.len() < 4 {
+                    return 0;
+                }
+                let n = (data[1] as u16) | ((data[2] as u16) << 8);
+                let nbytes = (n as usize) + 1;
+                if data.len() < (3 + nbytes) {
+                    return 0;
+                }
+
+                hardware.mpsse_write_tdi_bytes_lsb_mode0(&data[3..3+nbytes]);
+
+                3 + nbytes
+            }
             0x1a => {
                 // Clock Data Bits Out on +ve clock edge LSB first (no read)
                 if data.len() < 3 {
