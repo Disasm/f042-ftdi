@@ -29,18 +29,15 @@ fn main() -> ! {
      *
      * Uncomment the following function if the situation above applies to you.
      */
+    #[cfg(feature = "tssop20")]
+    stm32f0xx_hal::usb::remap_pins(&mut dp.RCC, &mut dp.SYSCFG);
 
-    //stm32f0xx_hal::usb::remap_pins(&mut dp.RCC, &mut dp.SYSCFG);
-
-    let mut rcc = dp
-        .RCC
-        .configure()
-        //.hsi48()
-        .hse(8.mhz(), HSEBypassMode::Bypassed)
-        .enable_crs(dp.CRS)
-        .sysclk(48.mhz())
-        .pclk(48.mhz())
-        .freeze(&mut dp.FLASH);
+    let rcc_cfgr = dp.RCC.configure();
+    #[cfg(feature = "tssop20")]
+    let rcc_cfgr = rcc_cfgr.hsi48().enable_crs(dp.CRS);
+    #[cfg(not(feature = "tssop20"))]
+    let rcc_cfgr = rcc_cfgr.hse(8.mhz(), HSEBypassMode::Bypassed);
+    let mut rcc = rcc_cfgr.sysclk(48.mhz()).pclk(48.mhz()).freeze(&mut dp.FLASH);
 
     let gpioa = dp.GPIOA.split(&mut rcc);
 

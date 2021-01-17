@@ -13,6 +13,10 @@ usb-device = "0.2.7"
 rtt-target = { version = "0.2.0", features = ["cortex-m"] }
 panic-rtt-target = { version = "0.1.0", features = ["cortex-m"] }
 
+[features]
+# Enable this feature to build for a standalone target without an external resonator
+tssop20 = []
+
 [profile.dev]
 debug = true
 lto = true
