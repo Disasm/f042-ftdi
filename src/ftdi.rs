@@ -420,10 +420,22 @@ impl<B: UsbBus> UsbClass<B> for FtdiPort<'_, B> {
 
         let port_index = req.index as u8;
         if !(req.request_type == control::RequestType::Vendor
-            && req.recipient == control::Recipient::Device
-            && port_index == (u8::from(self.interface) + 1))
+            && req.recipient == control::Recipient::Device)
         {
             return;
+        }
+
+        match req.request {
+            SIO_SET_BAUDRATE_REQUEST => {
+                if port_index != u8::from(self.interface) {
+                    return;
+                }
+            }
+            _ => {
+                if port_index != (u8::from(self.interface) + 1) {
+                    return;
+                }
+            }
         }
 
         match req.request {
