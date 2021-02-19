@@ -390,6 +390,8 @@ impl<'a, B: UsbBus> FtdiPort<'a, B> {
                             write_ep.write(&buf[..2 + bytes.len()]).map(|n| n - 2)
                         })
                         .ok();
+                } else {
+                    write_ep.write(&[0x31, 0x60]).ok();
                 }
             }
         }
