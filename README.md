@@ -15,6 +15,11 @@ Warning: this project is not finished yet, lots of FTDI commands are not impleme
 |              |           |
 | BDBUS0 (TXD) | PA2       |
 | BDBUS1 (RXD) | PA3       |
+|              |           |
+| USBDP        | PA12      |
+| USBDM        | PA11      |
+
+Additionally, 12MHz clock is provided on PA1.
 
 ## Build and program
 
