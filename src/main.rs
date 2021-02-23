@@ -45,6 +45,7 @@ fn main() -> ! {
     let tck = gpioa.pa5.into_push_pull_output_hs(&cs);
     let tdo = gpioa.pa6.into_floating_input(&cs);
     let tdi = gpioa.pa7.into_push_pull_output_hs(&cs);
+    let clock_out = gpioa.pa1.into_alternate_af2(&cs);
     drop(cs);
 
     let hw = Hardware::new();
@@ -59,6 +60,29 @@ fn main() -> ! {
     let mut port_a = FtdiPort::new(&usb_bus, &hw, FtdiMode::MPSSE);
     let mut port_b = FtdiPort::new(&usb_bus, &hw, FtdiMode::Serial);
     let mut usb_dev = FtdiPort::make_device(&usb_bus);
+
+    let mut timer = Timer::tim2(dp.TIM2, Hertz(rcc.clocks.sysclk().0 / 16), &mut rcc);
+    unsafe {
+        let tim2 = &*pac::TIM2::ptr();
+        tim2.cr1.modify(|_, w| w.cen().clear_bit());
+        tim2.cnt.reset();
+
+        tim2.ccmr1_output().modify(|_, w| {
+            w.oc2pe().set_bit();
+            w.oc2m().bits(0b011);
+            w
+        });
+        // 12MHz
+        tim2.psc.write(|w| w.bits(0));
+        tim2.arr.write(|w| w.bits(1));
+        tim2.ccr2.write(|w| w.bits(0));
+        tim2.ccer.modify(|_, w| {
+            w.cc2e().set_bit()
+        });
+
+        // Enable timer
+        tim2.cr1.modify(|_, w| w.cen().set_bit());
+    }
 
     loop {
         usb_dev.poll(&mut [&mut port_a, &mut port_b]);
